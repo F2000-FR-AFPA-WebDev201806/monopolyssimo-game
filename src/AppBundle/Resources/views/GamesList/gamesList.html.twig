@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}MonopolYssimo{% endblock%}
+
+
+{% block body %}
+    {# dans le header <p>Bienvenue {{ user.login }}>/p> #}
+    
+    {# faire un "foreach" pour afficher tous les salons existants", if avec le status #}
+    {% for game in games %}
+        <p>
+            Salon {{ game.gameName }} 
+            Joueurs actifs : {{ game.playersNb }}
+            <span> 
+                {# {{ form_start(formJoinGame) }}
+                <input type="submit" value="REJOINDRE JEU" name="join-game" />
+                {{ form_end(formJoinGame)}} #}
+                <a href="{{ path('joinGame') }}" >REJOINDRE JEU</a>
+            </span>
+        </p>
+    {% endfor %}
+    {{ form_start(formCreateGame) }}
+    <input type="submit" value="CREER NOUVEAU SALON" name="create-game" />
+    <br />
+    {{ form_label(formCreateGame.game_name, 'Nom du salon') }}
+    {{ form_widget(formCreateGame.game_name) }}
+    <br />
+    {{ form_widget(formCreateGame.players_nb) }}
+    {{ form_end(formCreateGame) }}
+    
+    
+{% endblock body %}  
