@@ -41,6 +41,12 @@ security:
                 username_parameter: user_login[username]
                 # (il faut examiner l'élement sur le site)
                 password_parameter: user_login[password]
+                default_target_path: gamesList
+                
+            logout:
+                invalidate_session: true
+                path: user_logout
+                target: user_login
             #-----------------------    
             # activate different ways to authenticate
 

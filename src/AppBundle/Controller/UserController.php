@@ -5,7 +5,7 @@ namespace AppBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 
@@ -27,9 +27,9 @@ class UserController extends Controller
         $oForm->handleRequest($oRequest);        
         if ($oForm->isSubmitted() && $oForm->isValid()) {
 
-            //Vérifier si l'utilisateur existe
+            //V�rifier si l'utilisateur existe
             //
-            //Chercher dans la base de données            
+            //Chercher dans la base de donn�es            
             $oRepoUser = $this->getDoctrine()->getRepository(User::class);
 
             //On ne veut pas chercher tous les utilisateurs mais un seule
@@ -61,45 +61,20 @@ class UserController extends Controller
      /**
      * @Route("/", name="user_login")
      */    
-    public function loginAction(Request $oRequest, UserPasswordEncoderInterface $encoder)
-    {
+    public function loginAction(AuthenticationUtils $authenticationUtils)
+{
+        // get the login error if there is one
+        $error = $authenticationUtils->getLastAuthenticationError();
+
         $oUser = new User;
-        
+        $oUser->setUsername($authenticationUtils->getLastUsername());
         $oForm = $this->createForm(UserLoginType::class, $oUser);
-
-        $oForm->handleRequest($oRequest);        
-        if ($oForm->isSubmitted() && $oForm->isValid()) {
-
-            //Vérifier si l'utilisateur existe
-            //
-            //Chercher dans la base de données            
-            $oRepoUser = $this->getDoctrine()->getRepository(User::class);
-
-            //On ne veut pas chercher tous les utilisateurs mais un seule
-            $oCheckUser = $oRepoUser->findOneBy([
-                    'username'   => $oUser->getUsername()
-                    ]);
-            
-            if ($oCheckUser) {
-                $isValid = $encoder->isPasswordValid($oCheckUser, $oUser->getPassword());
-                
-                if ($isValid) {
-                    $this -> addFlash('success', 'YOUHOUU !!');
-
-                    $oRequest->getSession()->set('utilisateur', $oCheckUser);
-
-                    return $this->redirectToRoute('gamesList', []);
-                }
-            }
-            
-            $this -> addFlash('error', 'TU N EXISTE PAS !!');                    
-
-            return $this->redirectToRoute('inscription');
-        }
-        return $this->render('@App/User/login.html.twig', [                        
-                        'form'   => $oForm->createView(),
-                        'user'   => $oUser
-        ]);
+               
+        return $this->render('@App/User/login.html.twig', [              
+                            'error'  => $error,                       
+                            'form'   => $oForm->createView(),
+                            'user'   => $oUser,
+            ]);            
     }
     /**
      * @Route("/inscription", name="inscription")
@@ -116,7 +91,7 @@ class UserController extends Controller
 
         if ($oForm->isSubmitted() && $oForm->isValid()) {
             
-            // pour stocker dans la base de données
+            // pour stocker dans la base de donn�es
             $entityManager = $this->getDoctrine()->getManager();
             
             $hash = $encoder->encodePassword($oUser, $oUser->getPassword());
@@ -128,18 +103,36 @@ class UserController extends Controller
             
             // Pour rediriger vers la page d'accueil
             
-            $this->addFlash('success', 'Inscription REUSSIE ');
-            
-            //'message' sera affiché sur l'url de la page accueil
-            // C'est un ajoute des paramètres
+            $this->addFlash('success', 'Inscription REUSSIE');
+          
             return $this->redirectToRoute('user_login');
         }
                 
         return $this->render('@App/User/inscription.html.twig', [
                         'user'   => $oUser,
                         'form'   => $oForm->createView()
-        ]);
-           
+        ]);           
+    }
+    
+    /**
+    * @Route("/Oldlogout", name="oldDeconnexion")     
+    */ 
+    public function logoutOldAction (Request $oRequest){
+        
+        $oRequest->getSession()->invalidate();
+        
+        return $this->redirectToRoute('user_login');
+                
+    }    
+    /**
+    * @Route("/logout", name="user_logout")     
+    */ 
+    public function logoutAction (Request $oRequest){
+        
+        $oRequest->getSession()->invalidate();
+        
+        return $this->redirectToRoute('user_login');
+                
     }
         
 }

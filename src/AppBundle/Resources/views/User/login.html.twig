@@ -6,40 +6,22 @@
 
 {% block body %}    
     
-    </br>    </br>
-    LOGIN YARA
-    </br>    </br>
-
-    
     <div id="wrapper" class="text-center">
                       
-        {{ dump(app.user) }}
-        
-        {#
-        {% if app.user %}#}
-        {% if app.session.has('utilisateur') %}
+        {# {{ dump(error) }} #}
             
-            {# on crée une variable intermediaire #}
-            {% set user = app.session.get('utilisateur') %}
-            {{'BIENVENUE AU JEU  ' ~ user.username}}
+        {{ form_start(form, {'attr': {class: 'form-signin'}}) }}
 
-        {%else%}
-            
-            {{ form_start(form, {'attr': {class: 'form-signin'}}) }}
-             <img class="mb-4" src="bundles/app/images/mr_monopoly.jpg" alt="" width="72" height="72">
-             
-            <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+            <img class="mb-4" src="{{asset('bundles/app/images/mr_monopoly.jpg')}}" alt="" width="72" height="72">
+
+            <h1 class="h3 mb-3 font-weight-normal">Qui êtes-vous?</h1>
             {{ form_widget(form) }}
 
             <input type="submit" value="LOGIN" class="btn btn-default pull-right" />
-            
-            <a href="{{path('inscription')}}" class="btn btn-default pull-right">S'INSCRIRE</a>
-        
-        {% endif %}
-            
+
+
         {{ form_end(form) }}
                 
-        
     </div>
     
 {% endblock  %}
