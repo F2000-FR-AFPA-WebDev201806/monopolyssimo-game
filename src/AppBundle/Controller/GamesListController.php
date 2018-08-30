@@ -23,20 +23,17 @@ class GamesListController extends Controller {
      * @Route("/liste_jeux", name="gamesList")
      */
     
-    public function indexAction() {
-        
-        //créer des liens href ?
-        
+    public function indexAction(Request $oRequest) {
+        $oGame = new Game();
         //récupération des parties en bdd
         $oRepoGame = $this->getDoctrine()->getRepository(Game::class);
         $oCheckGame = $oRepoGame->findBy([
                 'status' => 'waiting',
             ]);
-        dump($oCheckGame);
-        //création du formulaire de création de salon
-        $oFormCreateGame = $this->createFormBuilder($oCheckGame)
-            //->setAction($this->generateUrl('validation'))
+        //création du formulaire de création de salon  
+        $oFormCreateGame = $this->createFormBuilder($oGame)
             ->setMethod('POST')
+            ->setAction($this->generateUrl('gamesList'))
             ->add('game_name', TextType::class)
             ->add('players_nb', ChoiceType::class, array(
                 'choices' => array(
@@ -46,39 +43,35 @@ class GamesListController extends Controller {
                     '5 joueurs' => 5,
                     '6 joueurs' => 6,
                 ),
-                //'preferred_choices' => array(4), //pour que le choix 4 joueurs soit sélectionné par défaut
+                //'preferred_choices' => array(4), //incomplet pour que le choix 4 joueurs soit sélectionné par défaut
             ))
             ->getForm()
         ;
-        //création du formulaire pour rejoindre un salon
-        $oFormJoinGame = $this->createFormBuilder()
-            //->setAction($this->generateUrl('validation'))
-            ->setMethod('POST')
-            ->getForm()
-        ;
-        //return new Response('suite à faire');
+        // stockage du nouveau salon dans la base de données
+        $oFormCreateGame->handleRequest($oRequest);
+        if ( $oFormCreateGame->isSubmitted() AND $oFormCreateGame->isValid() ) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($oGame);
+            $entityManager->flush();
+            $this->addFlash('success', 'Salon CREE');
+            return $this->redirectToRoute('gameboard', ['gameId' => $oGame->getId()]);
+        } else if ( $oFormCreateGame->isSubmitted() AND !$oFormCreateGame->isValid() ) {
+            $this->addFlash('error', 'Erreur, veuillez recommencer');
+            return $this->redirectToRoute('gamesList');
+        }
+        
         return $this->render('@App/GamesList/gamesList.html.twig', [
             'formCreateGame' => $oFormCreateGame->createView(),
-            'formJoinGame' => $oFormJoinGame->createView(),
             'games' => $oCheckGame,
         ]);
-    }
-    
-    /**
-     * @Route("/creer", name="createGame")
-     */
-    
-    public function createRoomAction(Request $oRequest) {
-        
-        return $this->redirectToRoute('gameboard');
     }
     
     /**
      * @Route("/rejoindre", name="joinGame")
      */
     
-    public function joinRoomAction(Request $oRequest) {
-        return new Response('A toi la suite du boulot Ryiadh !');
-        //return $this->redirectToRoute('gameboard');
+    public function joinRoomAction() {
+        //passer peut-être l'id dans le return*/
+        return $this->redirectToRoute('gameboard');
     }
 }

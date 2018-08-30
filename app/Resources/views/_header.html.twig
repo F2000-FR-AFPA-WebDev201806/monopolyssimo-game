@@ -1,0 +1,49 @@
+
+<header>
+    
+    {# {{ dump(app.user) }} #}    
+    
+    <div class = "row">
+        
+        <div class = "col align-self-center">
+
+            <img class="img-fluid" src="{{asset('bundles/app/images/Monopoly-Logo.jpg')}}" alt="" width="200">
+
+        </div>
+
+        <div class = "col align-self-center">
+           
+        {# {{ dump(app.request.attributes.get('_route')) }} #}
+       
+        <h3 class="mb-0 text-center"> {{'BIENVENUE AU JEU'}} </h3>
+
+        {% if app.user %}                               
+
+             <h4 class="text-center"> {{ app.user.username }} </h4>        
+
+        {% endif %}
+            
+        </div>
+        
+        <div class = "col align-self-center text-center">
+                             
+            {% if app.user %}
+
+                <a href="{{path('user_logout')}}" class="btn btn-primary">DECONNEXION</a>
+                
+            {% elseif app.request.attributes.get('_route')is same as ("inscription")%}
+                
+                <a href="{{path('user_login')}}" class="btn btn-primary">LOGIN</a>
+                
+            {% else %}
+                
+                <a href="{{path('inscription')}}" class="btn btn-primary">S'INSCRIRE</a>
+                
+            {%endif%}
+            
+        </div>
+                
+    </div>
+   
+</header>
+

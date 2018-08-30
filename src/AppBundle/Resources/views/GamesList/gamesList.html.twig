@@ -12,10 +12,7 @@
             Salon {{ game.gameName }} 
             Joueurs actifs : {{ game.playersNb }}
             <span> 
-                {# {{ form_start(formJoinGame) }}
-                <input type="submit" value="REJOINDRE JEU" name="join-game" />
-                {{ form_end(formJoinGame)}} #}
-                <a href="{{ path('joinGame') }}" >REJOINDRE JEU</a>
+                <a href="{{ path('gameboard', {'gameId' : game.id}) }}" >REJOINDRE JEU</a>
             </span>
         </p>
     {% endfor %}
