@@ -1,11 +1,23 @@
 # To get started with security, check out the documentation:
 # https://symfony.com/doc/current/security.html
 security:
+    #AJOUTE
+    encoders:
+        AppBundle\Entity\User:
+            algorithm: bcrypt
+        
 
     # https://symfony.com/doc/current/security.html#b-configuring-how-users-are-loaded
     providers:
         in_memory:
             memory: ~
+        
+        # AJOUTE
+        # C'est un alias
+        in_database: 
+            entity:
+                class: AppBundle\Entity\User
+                property: username
 
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
@@ -13,8 +25,23 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
-        main:
+        main:            
             anonymous: ~
+            
+            # AJOUTE : 
+            # Pour indiquer au Symfony où se trouvent les info pour le "login"
+            provider: in_database
+            # AJOUTE
+            # Obligatoire (si on veux utiliser la gestion login de Symfony
+            form_login:
+                login_path: user_login
+                check_path: user_login
+                #Pour spécifier le declenchement pour faire le test dans la BDD
+                # (il faut examiner l'élement sur le site)
+                username_parameter: user_login[username]
+                # (il faut examiner l'élement sur le site)
+                password_parameter: user_login[password]
+            #-----------------------    
             # activate different ways to authenticate
 
             # https://symfony.com/doc/current/security.html#a-configuring-how-your-users-will-authenticate

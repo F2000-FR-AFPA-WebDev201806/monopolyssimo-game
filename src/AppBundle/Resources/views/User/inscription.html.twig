@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Inscription
+{% endblock  %}
+
+{% block body %}    
+    
+     </br>    </br>
+    INSCRIPTION
+    </br>    </br>
+    
+    <div id="wrapper" class="text-center">
+        
+        {{ form_start(form, {'attr': {class: 'form-signin'}}) }}
+        {{ form_widget(form) }}
+
+        {{ form_row(form.password.first) }}
+        {{ form_row(form.password.second) }}
+        
+        <input type="submit" value="VALIDER" class="btn btn-lg btn-primary btn-block" />
+        
+        {{ form_end(form) }}
+        
+    </div>
+    
+{% endblock  %}
+
+{% block stylesheets %}
+    <style>
+        body {background-color: #08C ;}
+        
+    </style>
+    
+{% endblock  %}
