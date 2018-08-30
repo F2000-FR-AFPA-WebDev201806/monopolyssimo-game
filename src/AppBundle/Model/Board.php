@@ -2,6 +2,8 @@
 
 namespace AppBundle\Model;
 
+use AppBundle\Model\Box;
+
 class Board {
 
     const BOARD = array(
@@ -47,5 +49,55 @@ class Board {
         39 => Array('index' => 33, 'valeur' => 50),
         40 => Array('index' => 0, 'valeur' => 50),
     );
+
+    public $grid = [];
+
+    public function __construct($liste_players) {
+
+        $grid[0] = new Box(20, 100);
+        $grid[1] = new Box(21, 0);
+        $grid[2] = new Box(22, 50);
+        $grid[3] = new Box(23, 100);
+        $grid[4] = new Box(24, 0);
+        $grid[5] = new Box(25, 100);
+        $grid[6] = new Box(26, 0);
+        $grid[7] = new Box(27, 5);
+        $grid[8] = new Box(28, 1);
+        $grid[9] = new Box(29, 100);
+        $grid[10] = new Box(30, 5);
+        $grid[11] = new Box(19, 50);
+        $grid[12] = new Box(31, 100);
+        $grid[13] = new Box(18, 0);
+        $grid[14] = new Box(32, 0);
+        $grid[15] = new Box(17, 1);
+        $grid[16] = new Box(33, 0);
+        $grid[17] = new Box(16, 100);
+        $grid[18] = new Box(34, 50);
+        $grid[19] = new Box(15, 100);
+        $grid[20] = new Box(35, 0);
+        $grid[21] = new Box(14, 50);
+        $grid[22] = new Box(36, 50);
+        $grid[23] = new Box(13, 5);
+        $grid[24] = new Box(37, 100);
+        $grid[25] = new Box(12, 100);
+        $grid[26] = new Box(38, 0);
+        $grid[27] = new Box(11, 0);
+        $grid[28] = new Box(39, 1);
+        $grid[29] = new Box(10, 0);
+        $grid[30] = new Box(9, 100);
+        $grid[31] = new Box(8, 100);
+        $grid[32] = new Box(7, 5);
+        $grid[33] = new Box(6, 5);
+        $grid[34] = new Box(5, 5);
+        $grid[35] = new Box(4, 100);
+        $grid[36] = new Box(3, 1);
+        $grid[37] = new Box(2, 50);
+        $grid[38] = new Box(1, 1);
+        $grid[39] = new Box(33, 50);
+        $grid[40] = new Box(0, 50);
+        foreach ($liste_players as $player) {
+            $grid[40] . $liste_players[] = $player;
+        }
+    }
 
 }
