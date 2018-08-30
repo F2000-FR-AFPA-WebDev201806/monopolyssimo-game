@@ -8,12 +8,12 @@ namespace AppBundle\Entity;
  * @author Zensaikeunde
  */
 
+use Doctrine\ORM\Mapping as ORM;
+
 /**
  * @ORM\Entity
  * @ORM\Table(name="game", options={"engine":"InnoDB"})
  */
-
-use Doctrine\ORM\Mapping as ORM;
 
 class Game {
     /**
@@ -28,7 +28,7 @@ class Game {
     protected $game_name;
     
     /**
-     * @ORM\Column(name="players_nb", type="string", length=250)
+     * @ORM\Column(name="players_nb", type="integer")
      */       
     
     protected $players_nb;
@@ -38,7 +38,10 @@ class Game {
      */
     protected $status;
     
-
+    public function __construct() {
+        $this->setStatus('waiting');
+    }
+    
     /**
      * Get id
      *
