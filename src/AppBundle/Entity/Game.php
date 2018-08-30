@@ -2,42 +2,54 @@
 
 namespace AppBundle\Entity;
 
-/**
- * Description of Game
- *
- * @author Zensaikeunde
- */
+use AppBundle\Entity\User;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="game", options={"engine":"InnoDB"})
  */
-
-use Doctrine\ORM\Mapping as ORM;
-
 class Game {
+
     /**
      * @ORM\Id
      * @ORM\Column(name="id", type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    protected $id;
+    private $id;
+
     /**
      * @ORM\Column(name="game_name", type="string", length=50)
-     */       
-    protected $game_name;
-    
+     */
+    private $gameName;
+
     /**
-     * @ORM\Column(name="players_nb", type="string", length=250)
-     */       
-    
-    protected $players_nb;
-    
+     * @ORM\Column(name="players_nb", type="integer", length=50)
+     */
+    private $playersNb;
+
     /**
      * @ORM\Column(name="status", type="string", length=50)
      */
-    protected $status;
-    
+    private $status;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\User", cascade={"persist"})
+     */
+    private $players;
+
+    /**
+     * @ORM\Column(name="data", type="text", length=255)
+     */
+    private $data;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->players = new \Doctrine\Common\Collections\ArrayCollection();
+    }
 
     /**
      * Get id
@@ -58,7 +70,7 @@ class Game {
      */
     public function setGameName($gameName)
     {
-        $this->game_name = $gameName;
+        $this->gameName = $gameName;
 
         return $this;
     }
@@ -70,19 +82,19 @@ class Game {
      */
     public function getGameName()
     {
-        return $this->game_name;
+        return $this->gameName;
     }
 
     /**
      * Set playersNb
      *
-     * @param string $playersNb
+     * @param integer $playersNb
      *
      * @return Game
      */
     public function setPlayersNb($playersNb)
     {
-        $this->players_nb = $playersNb;
+        $this->playersNb = $playersNb;
 
         return $this;
     }
@@ -90,11 +102,11 @@ class Game {
     /**
      * Get playersNb
      *
-     * @return string
+     * @return integer
      */
     public function getPlayersNb()
     {
-        return $this->players_nb;
+        return $this->playersNb;
     }
 
     /**
@@ -119,5 +131,63 @@ class Game {
     public function getStatus()
     {
         return $this->status;
+    }
+
+    /**
+     * Set data
+     *
+     * @param string $data
+     *
+     * @return Game
+     */
+    public function setData($data)
+    {
+        $this->data = $data;
+
+        return $this;
+    }
+
+    /**
+     * Get data
+     *
+     * @return string
+     */
+    public function getData()
+    {
+        return $this->data;
+    }
+
+    /**
+     * Add player
+     *
+     * @param \AppBundle\Entity\User $player
+     *
+     * @return Game
+     */
+    public function addPlayer(\AppBundle\Entity\User $player)
+    {
+        $this->players[] = $player;
+
+        return $this;
+    }
+
+    /**
+     * Remove player
+     *
+     * @param \AppBundle\Entity\User $player
+     */
+    public function removePlayer(\AppBundle\Entity\User $player)
+    {
+        $this->players->removeElement($player);
+    }
+
+    /**
+     * Get players
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getPlayers()
+    {
+        return $this->players;
     }
 }
