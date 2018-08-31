@@ -10,6 +10,7 @@
             <li>Nombre requis de la partie : {{game.playersNb}} </li>
             <li>listes joueurs présents :
                 <ul>
+                    {{dump(game.getPlayers)}}
                     {% for joueur in game.getPlayers %}
                         <li><span class="fas fa-lock-open"></span> {{ joueur.username }}</li>
                         {% endfor %}
@@ -75,12 +76,20 @@
             </div>
 
             <div class="col-2">
-
-                <a href="{{ path('launchDice', {'pos_actuelle' : pos_jeton}) }}" class="btn btn-primary">
-                    <img src="{{ asset('bundles/app/images/des.jpg') }}"/>
-                </a>
-                {% if dice is defined%}
-                    <img src="{{ asset('bundles/app/images/des/' ~ dice ~ '.png' )}}"/>
+                {# PARTIE DICE#}
+                {% if checkPermission %}
+                    <a href="{{ path('launchDice', {'pos_actuelle' : pos_jeton}) }}" class="btn btn-primary">
+                        <img src="{{ asset('bundles/app/images/des.jpg') }}"/>
+                    </a>
+                    {% if dice is defined%}
+                        <img src="{{ asset('bundles/app/images/des/' ~ dice ~ '.png' )}}"/>
+                    {%endif%}
+                {%else%}
+                    
+                    <a href="{{ path('gameboard', {'gameId' : game.id}) }}" class="btn btn-primary">
+                        ATTENDRE JOUEURS
+                    </a>
+                    
                 {%endif%}
 
             </div>

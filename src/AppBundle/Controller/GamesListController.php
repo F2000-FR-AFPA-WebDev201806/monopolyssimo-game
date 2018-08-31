@@ -2,11 +2,7 @@
 
 namespace AppBundle\Controller;
 
-/**
- * Description of HomeController
- *
- * @author Zensaikeunde
- */
+
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Routing\Annotation\Route;
@@ -24,6 +20,7 @@ class GamesListController extends Controller {
      */
     
     public function indexAction(Request $oRequest) {
+        
         $oGame = new Game();
         //récupération des parties en bdd
         $oRepoGame = $this->getDoctrine()->getRepository(Game::class);
@@ -50,11 +47,20 @@ class GamesListController extends Controller {
         // stockage du nouveau salon dans la base de données
         $oFormCreateGame->handleRequest($oRequest);
         if ( $oFormCreateGame->isSubmitted() AND $oFormCreateGame->isValid() ) {
+            
+            // Création de salon
             $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($oGame);
+                       
+            // Ajouer le utilisateur en cour dans la liste de joueurs       
+            $oGame->addPlayer($this->getUser());
+            
+            $oGame->setStatus('waiting');
+            $oGame->setData(null);            
+            
+            $entityManager->persist($oGame); // Persist c'est que pour creer nouveau element BDD
             $entityManager->flush();
             $this->addFlash('success', 'Salon CREE');
-            return $this->redirectToRoute('gameboard', ['gameId' => $oGame->getId()]);
+           // return $this->redirectToRoute('gameboard', ['gameId' => $oGame->getId()]);
         } else if ( $oFormCreateGame->isSubmitted() AND !$oFormCreateGame->isValid() ) {
             $this->addFlash('error', 'Erreur, veuillez recommencer');
             return $this->redirectToRoute('gamesList');
@@ -67,11 +73,38 @@ class GamesListController extends Controller {
     }
     
     /**
-     * @Route("/rejoindre", name="joinGame")
+     * @Route("/rejoindre/{gameId}", name="joinGame")
      */
     
-    public function joinRoomAction() {
+    public function joinRoomAction(Request $oRequest, $gameId) {
+             
+        //récupération de la bdd
+        $oDoctrine = $this->getDoctrine();
+        
+        //Recuperation d'objet game avec son ID
+        $oGame = $oDoctrine->getRepository(Game::class)->find($gameId);
+        
+       dump($this->getUser());
+        
+        // Ajouer le utilisateur en cour dans la liste de joueurs       
+        $oGame->addPlayer($this->getUser());
+        
+        //Mise à jour de la BDD
+        $oDoctrine->getManager()->flush();
+        
+        //////////////////////////
+        //dumper less players..        
+        //$oDoctrine = $this->getDoctrine();        
+        //Recuperation d'objet game avec son ID
+        //$oGame = $oDoctrine->getRepository(Game::class)->find($gameId);
+        //dump(count($oGame->getPlayers()));
+        //////////////////////////////
+         
         //passer peut-être l'id dans le return*/
-        return $this->redirectToRoute('gameboard');
-    }
+        return $this->redirectToRoute('gameboard', array('gameId'=>$gameId));
+    
+        /*return $this->render('@App/GameBoard/game_brod.html.twig', [
+            'game'=>$oGame,
+            'pos_jeton' => 0]);*/
+    }    
 }

@@ -29,7 +29,7 @@ class Game {
     private $playersNb;
 
     /**
-     * @ORM\Column(name="status", type="string", length=50)
+     * @ORM\Column(name="status", type="string", length=50,  options={"default" : "waiting"})
      */
     private $status;
 
@@ -39,7 +39,7 @@ class Game {
     private $players;
 
     /**
-     * @ORM\Column(name="data", type="text", length=255)
+     * @ORM\Column(name="data", type="text", length=255, options={"default" : null})
      */
     private $data;
 

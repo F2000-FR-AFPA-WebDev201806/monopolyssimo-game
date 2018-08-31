@@ -12,7 +12,7 @@
             Salon {{ game.gameName }} 
             Joueurs actifs : {{ game.playersNb }}
             <span> 
-                <a href="{{ path('gameboard', {'gameId' : game.id}) }}" >REJOINDRE JEU</a>
+                <a href="{{ path('joinGame', {'gameId' : game.id}) }}" >REJOINDRE JEU</a>
             </span>
         </p>
     {% endfor %}

@@ -26,17 +26,17 @@ class GameBoardController extends Controller {
 //
 //            dump($player);
 //        }
-
+        $checkPermission = false;
         if ($game->getPlayersNb() == count($game->getPlayers())) {
 
-            dump('vas y joue');
-        } else {
-            dump('patiente un peu....');
-        }
+            $checkPermission = true;
+            
+        } 
 
         return $this->render('@App/GameBoard/game_brod.html.twig', [
                     'game' => $game,
-                    'pos_jeton' => 0
+                    'pos_jeton' => 0,
+                    'checkPermission' => $checkPermission,
         ]);
     }
 
