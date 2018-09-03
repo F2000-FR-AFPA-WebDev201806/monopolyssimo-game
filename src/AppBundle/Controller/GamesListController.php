@@ -55,11 +55,23 @@ class GamesListController extends Controller {
             $oGame->addPlayer($this->getUser());
             
             $oGame->setStatus('waiting');
-            $oGame->setData(null);            
             
+            //Création data tableau
+            $tabColor =['blue', 'green', 'yellow', 'red', 'black', 'orange'];
+            $aData = []; 
+           $aData[] = ['player'=> $this->getUser()->getUsername(),
+                'position' => 0,
+               'bank' => 100,
+               'turn' => true,
+               'color' => $tabColor[array_rand($tabColor)],
+               'finished' => false,
+               ];
+            //$oGame->setData(null);            
+            $oGame->setData(serialize($aData));
             $entityManager->persist($oGame); // Persist c'est que pour creer nouveau element BDD
             $entityManager->flush();
             $this->addFlash('success', 'Salon CREE');
+            return $this->redirectToRoute('gameboard', array('gameId'=>$oGame->getId()));
            // return $this->redirectToRoute('gameboard', ['gameId' => $oGame->getId()]);
         } else if ( $oFormCreateGame->isSubmitted() AND !$oFormCreateGame->isValid() ) {
             $this->addFlash('error', 'Erreur, veuillez recommencer');
@@ -78,18 +90,46 @@ class GamesListController extends Controller {
     
     public function joinRoomAction(Request $oRequest, $gameId) {
              
+       
+        
         //récupération de la bdd
         $oDoctrine = $this->getDoctrine();
         
         //Recuperation d'objet game avec son ID
         $oGame = $oDoctrine->getRepository(Game::class)->find($gameId);
         
-       dump($this->getUser());
+       //dump($this->getUser());
         
         // Ajouer le utilisateur en cour dans la liste de joueurs       
         $oGame->addPlayer($this->getUser());
+        $aData = unserialize($oGame->getData());
+        $stop = false;
+        $aColorPlayers=[];
         
+         $tabColor =['blue', 'green', 'yellow', 'red', 'black', 'orange'];
+        
+        foreach ($aData as $ligne_joueur) {
+            
+           $aColorPlayers[] =  $ligne_joueur['color'];  
+        }
+            
+        do {
+            
+           $couleur =  $tabColor[array_rand($tabColor)];
+           
+                   
+        } while( in_array($couleur, $aColorPlayers) );
+                
+                                
+         $aData[] = ['player'=> $this->getUser()->getUsername(),
+                'position' => 0,
+               'bank' => 100,
+               'turn' => false,
+               'color' => $couleur,
+               'finished' => false,
+               ];
         //Mise à jour de la BDD
+          $oGame->setData(serialize($aData));
         $oDoctrine->getManager()->flush();
         
         //////////////////////////

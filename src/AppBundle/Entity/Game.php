@@ -39,7 +39,7 @@ class Game {
     private $players;
 
     /**
-     * @ORM\Column(name="data", type="text", length=255, options={"default" : null})
+     * @ORM\Column(name="data", type="text", options={"default" : null})
      */
     private $data;
 

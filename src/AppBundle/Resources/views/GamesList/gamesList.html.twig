@@ -6,16 +6,28 @@
 {% block body %}
     {# dans le header <p>Bienvenue {{ user.login }}>/p> #}
     
-    {# faire un "foreach" pour afficher tous les salons existants", if avec le status #}
-    {% for game in games %}
-        <p>
-            Salon {{ game.gameName }} 
-            Joueurs actifs : {{ game.playersNb }}
-            <span> 
-                <a href="{{ path('joinGame', {'gameId' : game.id}) }}" >REJOINDRE JEU</a>
-            </span>
-        </p>
+    <table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Nom du Salon</th>
+      <th scope="col">Nobre de joueur</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    
+     {% for game in games %}
+        <tr>
+            <td>{{ game.gameName }}</td> 
+            <td>Joueurs actifs : {{ game.playersNb }}</td>
+            <td><a href="{{ path('joinGame', {'gameId' : game.id}) }}" >REJOINDRE JEU</a></td>
+        </tr>
     {% endfor %}
+  
+  </tbody>
+</table>
+    
     {{ form_start(formCreateGame) }}
     <input type="submit" value="CREER NOUVEAU SALON" name="create-game" />
     <br />

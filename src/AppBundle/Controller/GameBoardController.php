@@ -6,6 +6,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use AppBundle\Entity\Game;
+//pour debug
+use Symfony\Component\HttpFoundation\Response;
 
 class GameBoardController extends Controller {
 
@@ -37,39 +39,143 @@ class GameBoardController extends Controller {
                     'game' => $game,
                     'pos_jeton' => 0,
                     'checkPermission' => $checkPermission,
+                    'data'=> unserialize($game->getData())
         ]);
     }
 
+    public function cm_decroissant ($a, $b) {
+        if ($a['bank']<$b['bank']) {
+            return -1;
+        }
+        if ($a['bank']>$b['bank']) {
+            return 1;
+        }
+        if ($a['bank']==$b['bank']) {
+            return 0;
+        }
+    }
+        
     /**
-     * @Route("/jet_des/{pos_actuelle}", name="launchDice")
+     * @Route("/jet_des/{gameId}", name="launchDice")
      */
-    public function launchDiceAction(Request $request, $pos_actuelle) {
+    public function launchDiceAction(Request $request, $gameId) {
+        
+        
+        $oDoctrine = $this->getDoctrine();
+        
+        //Recuperation d'objet game avec son ID
+        $game = $oDoctrine->getRepository(Game::class)->find($gameId);
+        
+        $aData = unserialize($game->getData());
+        
+        $dice = rand(20, 30);
+         // recupere la ligne du joeur concerné 
+        
+        foreach ($aData as $key => $ligne_joueur) {
+            //$index = $key;
+            //dump($ligne_joueur['player']);
+            
+            if ($ligne_joueur['player'] == $this->getUser()->getUsername() ){
+                     
+                $index = $key;
+             
+            }
+        }
+            
+        $gameOver=false;
+        $aData[$index]['position'] = $aData[$index]['position']+$dice;
 
-        $dice = rand(1, 6);
+        if ($aData[$index]['position'] > 39) {
+            $aData[$index]['finished'] = true;
+            $gameOver=true;
 
-        $liste_joueurs = array(0 => array('id' => 55, 'cagnotte' => 1200),
-            1 => array('id' => 3, 'cagnotte' => 200),
-            2 => array('id' => 107, 'cagnotte' => 0),
-        );
+            //verifier si tt l emonde a fini
+            $stop=true;
+            for ($i=0; $i<count($aData);$i++) {
+                if (!$aData[$i]['finished']) {
+                    $stop=false;
+                    //status=>finished
+                }
+            }
+            if ($stop) {
+                $game->setData(serialize($aData));
+                $oDoctrine->getManager()->flush();
+                
+                //dump(array_multisort($aData,  SORT_DESC, 'bank'));
+                uasort($aData, [$this, 'cm_decroissant']);
+                
+                dump($aData);
+                
+                return $this->render('@App/GameBoard/gameOver.html.twig', [
+                   'game'=>$game,
+                   'data'=> $aData,
+                ]);
 
-        if ($pos_actuelle + $dice > 39) {
-            return $this->redirectToRoute("gameOver");
+            }
+
+        } else {
+
+            //recuprer la cagnotte
+            //$key = array_search($aData[$index]['position'], \AppBundle\Model\Board::BOARD); 
+           $key=0; 
+           while ( \AppBundle\Model\Board::BOARD[$key]['index'] != $aData[$index]['position']) {
+
+                $key++;
+
+           }
+
+           $aData[$index]['bank']=$aData[$index]['bank']+ \AppBundle\Model\Board::BOARD[$key]['valeur'];
+           $aData[$index]['turn'] = FALSE;
+
+       }
+
+       $nextPlayer = ($index+1) % count($aData);
+
+
+       while ($aData[$nextPlayer]['finished']){
+           $nextPlayer = ($nextPlayer+1)% count($aData);
+       }
+
+       $aData[$nextPlayer]['turn'] = TRUE;
+
+        $game->setData(serialize($aData));
+        $oDoctrine->getManager()->flush();
+            //return new Response('debug');
+        if ($gameOver)
+        {
+
+            return $this->render('@App/GameBoard/gameOver.html.twig', [
+                       'game'=>$game,
+                       'data'=> $aData,
+               ]);
+
         } else {
             return $this->render('@App/GameBoard/game_brod.html.twig', [
-                        'base_dir' => realpath($this->getParameter('kernel.project_dir')) . DIRECTORY_SEPARATOR,
-                        'liste_joueurs' => $liste_joueurs,
-                        'dice' => $dice,
-                        'pos_jeton' => $pos_actuelle + $dice,
+                    'game' => $game,        
+                    'dice' => $dice,
+                    'pos_jeton' => $aData[$index]['position'],
+                    'checkPermission' => true,
+                    'data'=> $aData,
             ]);
+                
         }
     }
 
     /**
-     * @Route("game_over", name="gameOver")
+     * @Route("game_over/{gameId}", name="gameOver")
      */
-    public function gameOverAction(Request $request) {
+    public function gameOverAction(Request $request, $gameId) {
 
+        $oDoctrine = $this->getDoctrine();
+        
+        //Recuperation d'objet game avec son ID
+        $game = $oDoctrine->getRepository(Game::class)->find($gameId);
+        
+        $aData = unserialize($game->getData());
+        
         return $this->render('@App/GameBoard/gameOver.html.twig', [
+            'game'=>$game,
+            'data'=> $aData,
         ]);
     }
 
