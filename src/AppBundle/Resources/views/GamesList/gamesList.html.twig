@@ -4,38 +4,32 @@
 
 
 {% block body %}
-    {# dans le header <p>Bienvenue {{ user.login }}>/p> #}
-    
-    <table class="table table-striped">
-  <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">Nom du Salon</th>
-      <th scope="col">Nobre de joueur</th>
-      <th scope="col"></th>
-    </tr>
-  </thead>
-  <tbody>
-    
-     {% for game in games %}
-        <tr>
-            <td>{{ game.gameName }}</td> 
-            <td>Joueurs actifs : {{ game.playersNb }}</td>
-            <td><a href="{{ path('joinGame', {'gameId' : game.id}) }}" >REJOINDRE JEU</a></td>
-        </tr>
-    {% endfor %}
-  
-  </tbody>
-</table>
-    
-    {{ form_start(formCreateGame) }}
-    <input type="submit" value="CREER NOUVEAU SALON" name="create-game" />
-    <br />
-    {{ form_label(formCreateGame.game_name, 'Nom du salon') }}
-    {{ form_widget(formCreateGame.game_name) }}
-    <br />
-    {{ form_widget(formCreateGame.players_nb) }}
-    {{ form_end(formCreateGame) }}
-    
+    <div class="container text-center">
+        {#<table class="table table-hover table-dark table-borderless">#}
+            {% for game in games %}
+                
+                <div class="row justify-content-md-center">
+
+                    <div class="col-2">Salon {{ game.gameName }} </div>
+                    <div class="col-2">Joueurs actifs : {{ game.playersNb }} </div>
+
+                    <a href="{{ path('joinGame', {'gameId' : game.id}) }}" class="btn btn-info col-2">REJOINDRE JEU</a>
+                    
+                </div>
+                <br />
+            {% endfor %}
+        {#</table>#}    
+        {{ form_start(formCreateGame) }}
+        {#mettre size à l'input nom du salon#}
+        {{ form_label(formCreateGame.game_name, 'Nom du salon') }}
+        {{ form_widget(formCreateGame.game_name) }}
+        <br />
+        {{ form_label(formCreateGame.game_name, 'Nombre de joueurs') }}
+        {{ form_widget(formCreateGame.players_nb) }}
+        <br />
+        <input type="submit" class="btn btn-secondary" value="CREER NOUVEAU SALON" name="create-game" />
+        
+        {{ form_end(formCreateGame) }}
+    </div>
     
 {% endblock body %}  

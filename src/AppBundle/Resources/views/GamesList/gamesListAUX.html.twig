@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}MonopolYssimo{% endblock%}
+
+
+{% block body %}
+    {# dans le header <p>Bienvenue {{ user.login }}>/p> #}
+    
+    <table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Nom du Salon</th>
+      <th scope="col">Nobre de joueur</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    
+     {% for game in games %}
+        <tr>
+            <td>{{ game.gameName }}</td> 
+            <td>Joueurs actifs : {{ game.playersNb }}</td>
+            <td><a href="{{ path('joinGame', {'gameId' : game.id}) }}" >REJOINDRE JEU</a></td>
+        </tr>
+    {% endfor %}
+  
+  </tbody>
+</table>
+    
+    {{ form_start(formCreateGame) }}
+    <input type="submit" value="CREER NOUVEAU SALON" name="create-game" />
+    <br />
+    {{ form_label(formCreateGame.game_name, 'Nom du salon') }}
+    {{ form_widget(formCreateGame.game_name) }}
+    <br />
+    {{ form_widget(formCreateGame.players_nb) }}
+    {{ form_end(formCreateGame) }}
+    
+    
+{% endblock body %}
+
+ {% block javascripts %}
+        
+        <script>
+         {#{% include asset('bundles/app/JS/ajax.js') %}#}
+         
+        $(document).ready(function () {    
+            console.log('READY TO GO !'); 
+
+        /*    $.ajax({
+                async   : true,
+                type    : 'GET',
+                url     : 'ajax.php', //
+                data    : 'numPage=' + $(this).attr('data-page'),
+                success : function(data){
+                    $('main').html(data);
+                } 
+            });*/
+            function refresh() {
+               //location.reload(true);
+               window.location = '{{ path('gamesList') }}';
+            }
+           // setInterval(refresh, 3000);
+        });
+        
+        </script>
+{% endblock %}

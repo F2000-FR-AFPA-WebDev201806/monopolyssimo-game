@@ -1,0 +1,14 @@
+
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h2>BRAVO {{data[0].player}} vous avez emportez la partie !! </h2>
+    <h2>Classement final</h1>
+    <ul>
+        {% for joueur in data %}
+
+            <li> {{ joueur.player }}--{{ joueur.bank }}</li>
+
+        {% endfor %}
+    </ul>    
+{% endblock %}

@@ -2,6 +2,7 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+
     <div class="container">
         <div class="row">
             <div class="col-10">
@@ -11,15 +12,16 @@
                         {% for j in 0..10 %}
                             <td class="case_game">
                                 <img src="{{ asset('bundles/app/images/' ~ constant('\\AppBundle\\Model\\Board::BOARD')[num_case].valeur ~ '.jpg') }}"/>
-                                {% if constant('\\AppBundle\\Model\\Board::BOARD')[num_case].index == pos_jeton %}
-                                    <img src="{{ asset('bundles/app/images/jetons/rouge.jpg')}}"/>
-                                {% endif %}
+
                                 {#  couleur joueurs#}
-                                                                  
-                                    {% for joueur in data %}
+
+                                {% for joueur in data %}
+                                    {# tester si le joeur est dans la ces #}
+                                    {% if joueur.position == constant('\\AppBundle\\Model\\Board::BOARD')[num_case].index%}
                                         <img class="jetons" src=" {{ asset('bundles/app/images/jetons/'~joueur.color~'.jpg') }}" />
-                                    {% endfor %}
-                                
+                                    {% endif %}
+                                {% endfor %}
+
                             </td>
                             {% set num_case=num_case+1 %}
                         {% endfor %}
@@ -28,19 +30,56 @@
                         <tr>
                             <td class="case_game">
                                 <img src="{{ asset('bundles/app/images/' ~ constant('\\AppBundle\\Model\\Board::BOARD')[num_case].valeur ~ '.jpg') }}"/>
-                                {% if constant('\\AppBundle\\Model\\Board::BOARD')[num_case].index == pos_jeton %}
-                                    <img src="{{ asset('bundles/app/images/jetons/rouge.jpg')}}"/>
-                                {% endif %}
+
+                                {% for joueur in data %}
+                                    {# tester si le joeur est dans la ces #}
+                                    {% if joueur.position == constant('\\AppBundle\\Model\\Board::BOARD')[num_case].index%}
+                                        <img class="jetons" src=" {{ asset('bundles/app/images/jetons/'~joueur.color~'.jpg') }}" />
+                                    {% endif %}
+                                {% endfor %}
+
                             </td>
                             {% set num_case=num_case+1 %}
                             {% for j in 0..8 %}
-                                <td></td>
+                                <td>
+                                    <img class="euro" src=" {{ asset('bundles/app/images/euro.jpg') }}" />
+                                    {# partie DICE #}
+                                    {% set turn=false %}
+                                    {% for joueur in data %}
+                                        {% if joueur.player == app.user.username %}
+                                            {% set turn = joueur.turn%}
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if i==4 and j==4 %} 
+
+                                        {% if not checkPermission or not turn%}
+                                            <a href="{{ path('gameboard', {'gameId' : game.id}) }}" class="btn btn-primary">
+                                                ATTENDRE
+                                            </a>
+
+                                        {%else%}
+                                            <a href="{{ path('launchDice', {'gameId' : game.id }) }}" class="btn btn-primary">
+                                                <img src="{{ asset('bundles/app/images/des.jpg') }}"/>
+                                            </a>
+                                            {#{% if dice is defined%}
+                                                ghfhfgj
+                                                <img src="{{ asset('bundles/app/images/des/' ~ dice ~ '.png' )}}"/>
+                                            {%endif%}#}
+                                        {%endif%}
+
+                                    {% endif %} 
+                                </td>
                             {% endfor %}
                             <td class="case_game">
                                 <img src="{{ asset('bundles/app/images/' ~ constant('\\AppBundle\\Model\\Board::BOARD')[num_case].valeur ~ '.jpg') }}"/>
-                                {% if constant('\\AppBundle\\Model\\Board::BOARD')[num_case].index == pos_jeton %}
-                                    <img src="{{ asset('bundles/app/images/jetons/rouge.jpg')}}"/>
-                                {% endif %}
+
+                                {% for joueur in data %}
+                                    {# tester si le joeur est dans la ces #}
+                                    {% if joueur.position == constant('\\AppBundle\\Model\\Board::BOARD')[num_case].index%}
+                                        <img class="jetons" src=" {{ asset('bundles/app/images/jetons/'~joueur.color~'.jpg') }}" />
+                                    {% endif %}
+                                {% endfor %}
+
                             </td>
                             {% set num_case=num_case+1 %}
                         </tr>
@@ -49,90 +88,94 @@
                         {% for j in 0..9 %}
                             <td class="case_game">
                                 <img src="{{ asset('bundles/app/images/' ~ constant('\\AppBundle\\Model\\Board::BOARD')[num_case].valeur ~ '.jpg') }}"/>
-                                {% if constant('\\AppBundle\\Model\\Board::BOARD')[num_case].index == pos_jeton %}
-                                    <img src="{{ asset('bundles/app/images/jetons/rouge.jpg')}}"/>
-                                {% endif %}
+
+                                {% for joueur in data %}
+                                    {# tester si le joeur est dans la ces #}
+                                    {% if joueur.position == constant('\\AppBundle\\Model\\Board::BOARD')[num_case].index%}
+                                        <img class="jetons" src=" {{ asset('bundles/app/images/jetons/'~joueur.color~'.jpg') }}" />
+                                    {% endif %}
+                                {% endfor %}
+
                             </td>
                             {% set num_case=num_case+1 %}
                         {% endfor %}
                         <td class="case_game">
                             DEPART
-                            {% if constant('\\AppBundle\\Model\\Board::BOARD')[num_case].index == pos_jeton %}
-                                <img src="{{ asset('bundles/app/images/jetons/rouge.jpg')}}"/>
-                            {% endif %}
+                            {% for joueur in data %}
+                                {# tester si le joeur est dans la ces #}
+                                {% if joueur.position == constant('\\AppBundle\\Model\\Board::BOARD')[num_case].index%}
+                                    <img class="jetons" src=" {{ asset('bundles/app/images/jetons/'~joueur.color~'.jpg') }}" />
+                                {% endif %}
+                            {% endfor %}
+
                         </td>
                     </tr>
                 </table>
             </div>
 
             <div class="col-2">
-                 <h1>plateau de jeu : {{app.user.username}}</h1>
-        
-        {{ dump (data) }}
-        <h2>info du game : </h2>
-        <ul>
-            <li>Nom de la partie : {{game.gameName}} </li>
-            <li>Nombre requis de la partie : {{game.playersNb}} </li>
-            <li>listes joueurs présents :
+
+                <h3>info du jeu </h3>
                 <ul>
-                    {% set turn=false %}
-                    
-                    {% for joueur in data %}
-                        {% if joueur.player == app.user.username %}
-                            {% set turn = joueur.turn%}
-                        {% endif %}
-                        <li> {{ joueur.player }}--{{ joueur.bank }}---{{ joueur.position }} ---{{ joueur.turn }}</li>
-                        {% endfor %}
-                </ul>
-            </li>
-        </ul>
-                {# PARTIE DICE#}
-                {% if checkPermission and turn%}
-                    <a href="{{ path('launchDice', {'gameId' : game.id }) }}" class="btn btn-primary">
-                        <img src="{{ asset('bundles/app/images/des.jpg') }}"/>
-                    </a>
-                    {% if dice is defined%}
-                        <img src="{{ asset('bundles/app/images/des/' ~ dice ~ '.png' )}}"/>
-                    {%endif%}
-                {%else%}
-                    
-                    <a href="{{ path('gameboard', {'gameId' : game.id}) }}" class="btn btn-primary">
-                        ATTENDRE JOUEURS
-                    </a>
-                   
+                    <li>Nom de la partie : <strong>{{game.gameName}}</strong> </li>
+                    <li>Nb joueur : {{game.playersNb}} </li>
+                    <li>Listes joueurs:
+                        <ul>
 
-                {%endif%}
-
+                            {#{% for joueur in data %} 
+81                          {% if joueur.player == app.user.username %} 
+82                              {% set turn = joueur.turn%} 
+83                          {% endif %} 
+84                          <li> {{ joueur.player }}--{{ joueur.bank }}---{{ joueur.position }} ---{{ joueur.turn }}</li> 
+85                          {% endfor %} 
+ #}
+                            {% for joueur in data %}
+                                {#{% if joueur.player == app.user.username %}
+                                    {% set turn = joueur.turn%}
+                                {% endif %}#}
+                                <li> 
+                                    {{ joueur.player }}
+                                    <strong>
+                                        {{ joueur.bank }}
+                                        €
+                                    </strong>
+                                    <img class="jetons" src=" {{ asset('bundles/app/images/jetons/'~joueur.color~'.jpg') }}" />
+                                </li>
+                            {% endfor %} 
+                        </ul>
+                    </li>
+                </ul>                
             </div>
         </div>
     {% endblock %}
     {% block javascripts %}
-        
-        <script>
-         {#{% include asset('bundles/app/JS/ajax.js') %}#}
-         
-        $(document).ready(function () {    
-            console.log('READY TO GO !'); 
 
-        /*    $.ajax({
-                async   : true,
-                type    : 'GET',
-                url     : 'ajax.php', //
-                data    : 'numPage=' + $(this).attr('data-page'),
-                success : function(data){
-                    $('main').html(data);
-                } 
-            });*/
-            function refresh() {
-               location.reload(true);
-            }
-            setInterval(refresh, 5000);
-        });
-        
+        <script>
+            {#{% include asset('bundles/app/JS/ajax.js') %}#}
+
+                $(document).ready(function () {
+                    console.log('READY TO GO !');
+
+                    /*    $.ajax({
+                     async   : true,
+                     type    : 'GET',
+                     url     : 'ajax.php', //
+                     data    : 'numPage=' + $(this).attr('data-page'),
+                     success : function(data){
+                     $('main').html(data);
+                     } 
+                     });*/
+                    function refresh() {
+                        //location.reload(true);
+                        window.location = '{{ path('gameboard', {'gameId' : game.id}) }}';
+                    }
+                    setInterval(refresh, 4000);
+                });
+
         </script>
     {% endblock %}
-    
-    
+
+
     {% block stylesheets %}
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
         <style>
@@ -145,12 +188,17 @@
                 width: 80px;
                 height: auto;
             }
-            
+
             .jetons {
-                 width: 10px;
-                 height: auto;
+                width: 30px;
+                height: auto;
             }
-            body { background: #F5F5F5; font: 18px/1.5 sans-serif; }
+            .euro {
+                width: 50px;
+                height: auto;
+            }
+            body { font: 18px/1.5 sans-serif; }
+
             h1, h2 { line-height: 1.2; margin: 0 0 .5em; }
             h1 { font-size: 36px; }
             h2 { font-size: 21px; margin-bottom: 1em; }

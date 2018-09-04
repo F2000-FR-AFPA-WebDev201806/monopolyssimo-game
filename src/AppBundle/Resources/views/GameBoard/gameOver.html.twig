@@ -3,31 +3,41 @@
 
 {% block body %}
     <h1>Game Over !!!!</h1>
-    
+
     <ul>
-        {{dump (data)}}
         {% set gameover = true %}
         {% for joueur in data %}
             {% if joueur.finished %}
                 <li> {{ joueur.player }}--{{ joueur.bank }}</li>
-            {% else  %}
-                {% set gameover = false %}
-            {% endif %}
-        {% endfor %}
-    </ul>
-        
-       
-        {% if not gameover %}
-        <a href="{{ path('gameOver', {'gameId' : game.id})}}" class="btn btn-primary">
-                        Actualisez ...
-       </a>
-        {% else %}
-            <h2>Classement final</h2>
-            {% for joueur in data %}
-            
-                <li> {{ joueur.player }}--{{ joueur.bank }}</li>
-            
+                {% else  %}
+                    {% set gameover = false %}
+                {% endif %}
             {% endfor %}
-        {%endif %}
-        
+    </ul>
+
+{% endblock %}
+{% block javascripts %}
+    <script>
+        {#{% include asset('bundles/app/JS/ajax.js') %}#}
+
+             $(document).ready(function () {
+                 console.log('READY TO GO !');
+
+                 /*    $.ajax({
+                  async   : true,
+                  type    : 'GET',
+                  url     : 'ajax.php', //
+                  data    : 'numPage=' + $(this).attr('data-page'),
+                  success : function(data){
+                  $('main').html(data);
+                  } 
+                  });*/
+                 function refresh() {
+                     //location.reload(true);
+                     window.location = '{{ path('gameOver', {'gameId' : game.id}) }}';
+                 }
+                 setInterval(refresh, 5000);
+             });
+
+    </script>
 {% endblock %}

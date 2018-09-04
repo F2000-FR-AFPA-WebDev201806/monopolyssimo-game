@@ -46,8 +46,8 @@ class Board {
         36 => Array('index' => 3, 'valeur' => 1),
         37 => Array('index' => 2, 'valeur' => 50),
         38 => Array('index' => 1, 'valeur' => 1),
-        39 => Array('index' => 33, 'valeur' => 50),
-        40 => Array('index' => 0, 'valeur' => 50),
+        39 => Array('index' => 0, 'valeur' => 50),
+        
     );
 
     public $grid = [];
