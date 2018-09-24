@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="game", options={"engine":"InnoDB"})
+ * @ORM\Table(name="mono_game", options={"engine":"InnoDB"})
  */
 class Game {
 
